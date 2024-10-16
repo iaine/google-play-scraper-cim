@@ -68,12 +68,12 @@ class PlayStoreScraper():
         devs = []
         for link in soup.find_all('a'):
             if link['href'].startswith('/store/apps/dev?id='):
-                soup1 = self._parse_url_html(base + link['href'])
+                soup1 = self._parse_url_html(self.base_url + link['href'])
                 for link in soup1.find_all('a'):
                     if link['href'].startswith('/store/apps/details'):
                         devs.append(link['href'].replace('/store/apps/details?id=',''))
             if link['href'].startswith('/store/apps/developer?id='):
-                soup1 = self._parse_url_html(base + link['href'])
+                soup1 = self._parse_url_html(self.base_url + link['href'])
                 for link in soup1.find_all('a'):
                     if link['href'].startswith('/store/apps/details'):
                         devs.append(link['href'].replace('/store/apps/details?id=',''))
