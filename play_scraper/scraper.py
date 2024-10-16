@@ -61,7 +61,7 @@ class PlayStoreScraper():
         
         #url = "https://play.google.com/store/apps/developer?id={}".format(developer_id)
         base = 'https://play.google.com/'
-        url = "{}store/apps/details?id={}".format(base, app_id)
+        url = "{}store/apps/details?id={}".format(base, developer_id)
         soup = self._parse_url_html(url)
         devs = []
         for link in soup.find_all('a'):
