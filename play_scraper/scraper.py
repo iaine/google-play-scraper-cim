@@ -19,13 +19,13 @@ class PlayStoreScraper():
         apps_search = [x["appId"] for x in results]
         return apps_search
     
-    def get_multiple_app_details(self, results) -> list:
+    def get_multiple_app_details(self, results, country="gb",lang="en",) -> list:
         '''
         Gets multiple app details
         '''
         rs = []
         for result in results:
-            rs.append(self.get_app_details(result,lang='en', country='us'))
+            rs.append(self.get_app_details(result,lang=lang, country=country))
 
         return rs
     
@@ -35,7 +35,7 @@ class PlayStoreScraper():
         '''
         return app(app_id,lang=lang, country=country)
     
-    def get_similar_app_ids_for_app(self, app_id) -> list:
+    def get_similar_app_ids_for_app(self, app_id, country = "gb", lang = "en") -> list:
         '''
         Finds the similar apps page url and returns a list of
         similar apps scraped from it. 
@@ -58,13 +58,25 @@ class PlayStoreScraper():
         '''
         Find apps by developer. 
         '''
-        url = "https://play.google.com/store/apps/developer?id={}".format(developer_id)
+        
+        #url = "https://play.google.com/store/apps/developer?id={}".format(developer_id)
+        base = 'https://play.google.com/'
+        url = "{}store/apps/details?id={}".format(base, app_id)
         soup = self._parse_url_html(url)
-        d_apps = []
+        devs = []
         for link in soup.find_all('a'):
-            if link['href'].startswith('/store/apps/details?id='):
-                d_apps.append(link['href'].replace('/store/apps/details?id=',''))
-        return d_apps
+            if link['href'].startswith('/store/apps/dev?id='):
+                soup1 = self._parse_url_html(base + link['href'])
+                for link in soup1.find_all('a'):
+                    if link['href'].startswith('/store/apps/details'):
+                        devs.append(link['href'].replace('/store/apps/details?id=',''))
+            if link['href'].startswith('/store/apps/developer?id='):
+                soup1 = self._parse_url_html(base + link['href'])
+                for link in soup1.find_all('a'):
+                    if link['href'].startswith('/store/apps/details'):
+                        devs.append(link['href'].replace('/store/apps/details?id=',''))
+
+        return devs
 
 
     ## Helper Functions 
