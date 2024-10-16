@@ -1,4 +1,4 @@
-## Play Scraper (CIM edition)
+## Play Store Scraper
 
 A light weight web scraper for the Google Play store.
 
