@@ -50,7 +50,7 @@ class PlayStoreScraper():
         
         for simlink in soup.find_all('a'):
             if simlink['href'].startswith('/store/apps/collection/cluster'):      
-                soup1 = self._parse_url_html(self.base_urls + simlink['href'])
+                soup1 = self._parse_url_html(self.base_url + simlink['href'])
                 for link in soup1.find_all('a'):
                     if link['href'].startswith('/store/apps/details'):
                         sim.append(link['href'].replace('/store/apps/details?id=',''))
