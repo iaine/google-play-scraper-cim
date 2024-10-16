@@ -9,7 +9,7 @@ import pandas as pd
 class PlayStoreScraper():
     
     def __init__(self) -> None:
-        pass
+        self.base_url = 'https://play.google.com/'
 
     def get_app_ids_for_query(self, term, country="gb",lang="en", num=25) -> list:
         '''
@@ -40,15 +40,17 @@ class PlayStoreScraper():
         Finds the similar apps page url and returns a list of
         similar apps scraped from it. 
         '''
-        base = 'https://play.google.com/'
-        url = "{}store/apps/details?id={}".format(base, app_id)
+        
+        url = "{}store/apps/details?id={}".format(self.base_url, app_id)
+        url += "&hl={}".format(lang)
+        url += "&gl={}".format(country)
         soup = self._parse_url_html(url)
 
         sim=[]
         
         for simlink in soup.find_all('a'):
             if simlink['href'].startswith('/store/apps/collection/cluster'):      
-                soup1 = self._parse_url_html(base + simlink['href'])
+                soup1 = self._parse_url_html(self.base_urls + simlink['href'])
                 for link in soup1.find_all('a'):
                     if link['href'].startswith('/store/apps/details'):
                         sim.append(link['href'].replace('/store/apps/details?id=',''))
@@ -58,10 +60,10 @@ class PlayStoreScraper():
         '''
         Find apps by developer. 
         '''
-        
-        #url = "https://play.google.com/store/apps/developer?id={}".format(developer_id)
-        base = 'https://play.google.com/'
-        url = "{}store/apps/details?id={}".format(base, developer_id)
+
+        url = "{}store/apps/details?id={}".format(self.base_url, developer_id)
+        url += "&hl={}".format(lang)
+        url += "&gl={}".format(country)
         soup = self._parse_url_html(url)
         devs = []
         for link in soup.find_all('a'):
