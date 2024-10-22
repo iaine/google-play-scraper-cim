@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from google_play_scraper import search, app
 import requests
 import pandas as pd
+import os
 
 class PlayStoreScraper():
     
@@ -111,6 +112,6 @@ class PlayStoreScraper():
         """
         try:
             df = self.json_to_dataframe(json_data)
-            df.to_csv(filename, index=False, encoding="utf-8") 
+            df.to_csv(os.path.join(os.getcwd(),filename), index=False, encoding="utf-8") 
         except Exception as e:
             print(e)
