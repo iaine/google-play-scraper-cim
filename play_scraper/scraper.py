@@ -3,9 +3,12 @@ Library to extend the existing Google Play Scraper.
 """
 from bs4 import BeautifulSoup
 from google_play_scraper import search, app
-import requests
-import pandas as pd
 import os
+import networkx as nx
+import pandas as pd
+import requests
+
+
 
 class PlayStoreScraper():
     
@@ -115,3 +118,36 @@ class PlayStoreScraper():
             df.to_csv(os.path.join(os.getcwd(),filename), index=False, encoding="utf-8") 
         except Exception as e:
             print(e)
+
+    def write_gexf (self, incoming_csv, outgoing_gexf):
+        """
+        Convert CSV into GEXF. Useful for using with Gephi lite. 
+        :param incoming_csv - CSV filename
+        :param outgoing_gexf - GEXF filename
+        """
+        df = pd.read_csv(os.path.join(os.getcwd(),"appecology.csv"))
+        df.columns = ['source', 'target']
+        Graphtype = nx.Graph()
+        G = nx.from_pandas_edgelist(df, create_using=Graphtype)
+        nx.write_gexf(G, os.path.join(os.getcwd(),"appecology.gexf"))
+
+    def similarity_network(self, startapp, csv_file, country="gb", language="uk"):
+        """
+        Function to get the Similarity Network
+        :param startapp - Package Name of the app to start the search
+        :param csv_file - CSV file to create
+        :param country - store country name. Defaults to GB. 
+        :param language - store language. Defaults to en_GB. 
+        """
+        fh = open(csv_file,"a")
+        similar = self.get_similar_app_ids_for_app(startapp, country = country, lang = language)
+        similar_app_details = self.get_multiple_app_details(similar, country=country, lang=language)
+
+        for app in similar_app_details:
+            sim_app_id = app["appId"]
+            fh.write("{}, {}\n".format(startapp, sim_app_id))
+            similar1 = self.get_similar_app_ids_for_app(sim_app_id, country = country, lang = language)
+            similar_app_details1 = self.get_multiple_app_details(similar1, country=country, lang=language)
+            for app1 in similar_app_details1:
+                fh.write("{}, {}\n".format(sim_app_id, app1['appId']))
+
